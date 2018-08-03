@@ -4,7 +4,8 @@ const SubHospitals = model.SubHospitals
 const Services = model.Services
 const Records = model.Records
 const {codes,checkResponseCode} = require('../utils/codes')
-
+const Sequelize = require('sequelize')
+const Op = Sequelize.Op;
 const index = async (ctx,next) => {
 	ctx.body = `<h1>Index</h1>
 		<form action="/hospitals" method="POST">
@@ -17,17 +18,43 @@ const index = async (ctx,next) => {
 /*获取医院相关信息*/
 const getHospitals = async (ctx,next) => {
 	//获取医院列表
-	console.log(ctx)
 	ctx.body = await Hospitals.findAll()
 }
 const getSubHospitals = async (ctx,next) => {
 	//获取对应id下子医院列表
 	let id = ctx.params.id
-	ctx.body = await SubHospitals.findAll({
-		where:{
-			pid:id
-		}
-	});
+	console.log(id)
+	let type = ctx.params.type
+	let search = ctx.params.search
+	console.log(id=='' || id == null || id == undefined)
+	if(type=='name'){
+		ctx.body = await SubHospitals.findAll({
+			where:{
+				pid:id,
+				name:{
+					[Op.like]: '%'+search+'%'
+				}
+			}
+		});
+	}else if(type=='type'){
+		ctx.body = await SubHospitals.findAll({
+			where:{
+				pid:id,
+				type:{
+					[Op.like]: '%'+search+'%'
+				}
+			}
+		});
+	}else if(id=='' || id == null || id == 'undefined'){
+		ctx.body = await SubHospitals.findAll();
+	}else{
+		ctx.body = await SubHospitals.findAll({
+			where:{
+				pid:id
+			}
+		});
+	}
+	
 }
 const getAllSubHospitals = async (ctx,next) => {
 	//获取所有子医院列表
@@ -70,7 +97,7 @@ const updateSubHospital = async (ctx,next) => {
 
 const delSubHospital = async (ctx,next) => {
 	//通过参数获取id
-	const id = ctx.request.url.substr(14,100);
+	const id = ctx.params.id;
 	ctx.body = await SubHospitals.destroy({
 		where:{
 			id:id
@@ -101,6 +128,12 @@ module.exports = [
 },
 {
 	path: '/SubHospitals/:id',
+	method: 'get',
+	func: getSubHospitals
+},
+,
+{
+	path: '/SubHospitals/:id/:type/:search',
 	method: 'get',
 	func: getSubHospitals
 },

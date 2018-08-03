@@ -1,9 +1,29 @@
 <template>
     <div style="height:100%;">
+  <div class="search-con">
+    <el-form :inline="true" :model="searchStr" class="demo-form-inline">
+  <el-form-item label="名称">
+    <el-input v-model="searchStr.name" placeholder="请输入搜索医院名称"></el-input>
+  </el-form-item>
+  <el-form-item label="网站类型">
+    <el-select v-model="searchStr.type" >
+      <el-option label="--请选择--" value=""></el-option>
+      <el-option label="pc" value="0"></el-option>
+      <el-option label="mobile" value="1"></el-option>
+    </el-select>
+  </el-form-item>
+  <el-form-item>
+    <el-button type="primary" @click="getSubHospitalsData">查询</el-button>
+  </el-form-item>
+  <el-form-item>
+    <el-button type="primary" @click="addHospitals">新增</el-button>
+  </el-form-item>
+</el-form>
+  </div>
       <el-table
       :data="hospitals"
       style="width: 100%" 
-      height="100%"
+      height="calc(100% - 83px)"
       highlight-current-row
       stripe
       border
@@ -108,7 +128,11 @@ export default {
       hospitals: [],
       openUrl: "",
       isShowEditVisible: false,
-      temp: {}
+      temp: {},
+      searchStr:{
+        name:'',
+        type:''
+      }
     };
   },
   beforeMount() {
@@ -130,12 +154,19 @@ export default {
     },
     getSubHospitalsData() {
       var _this = this;
-      var requestRoute = this.$route.path.substr(11, 12);
+      var requestRoute = this.$route.params.id;
       var requestUrl = "";
       if (requestRoute == null || requestRoute == "") {
         requestUrl = getAllSubHospitals;
       } else {
-        requestUrl = getSubHospitals + requestRoute;
+        if(_this.searchStr.name){
+          requestUrl = getSubHospitals + requestRoute + '/name/' + _this.searchStr.name;
+        }else if(_this.searchStr.type){
+          requestUrl = getSubHospitals + requestRoute + '/type/' + _this.searchStr.type;
+        }else{
+          requestUrl = getSubHospitals + requestRoute;
+        }
+        
       }
       this.$http({
         method: "get",
@@ -162,13 +193,11 @@ export default {
         type: "warning"
       })
         .then(() => {
-          console.log(tempData)
-          console.log(tempData.id)
           this.$http
             .delete(delHospitals+tempData.id, { id: tempData.id })
             .then(res => {
-              console.log(res);
               if (res.data.code == "0000") {
+                this.temp = {};
                 this.$message({
                   type: "success",
                   message: "删除成功!"
@@ -216,6 +245,12 @@ export default {
             message: res.data.msg
           });
         });
+    },
+    searchFunc(){
+
+    },
+    addHospitals(){
+
     }
   },
   watch: {
@@ -227,4 +262,10 @@ export default {
 
 
 <style scoped>
+.search-con{
+  border-top: 1px solid #ddd;
+  padding:20px 20px 0 20px;
+  height: 63px;
+  max-height: 63px;
+}
 </style>

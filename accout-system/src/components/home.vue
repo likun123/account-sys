@@ -56,7 +56,7 @@ export default {
   padding:10px 20px;
 }
 .main-body{
-  height:calc(100% - 40px);
+  height:calc(100% - 44px);
 }
 .loginOut{
   cursor: pointer;
