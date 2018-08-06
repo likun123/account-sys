@@ -68,4 +68,7 @@ for (let type of TYPES) {
   .catch(err => {
     console.error('Unable to connect to the database:', err);
   });*/
-module.exports = db
+module.exports = {
+	db,
+	sequelize
+}

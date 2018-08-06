@@ -10,6 +10,7 @@ const login = Host+'/users/login'
 const register = Host+'/users'
 const updateHospitals = Host+'/SubHospitals/'
 const delHospitals = Host+'/SubHospitals/'
+const search = Host+'/search'
 export {
     getHospitals,
     getSubHospitals,
@@ -19,5 +20,6 @@ export {
     login,
     register,
     updateHospitals,
-    delHospitals
+    delHospitals,
+    search
 }

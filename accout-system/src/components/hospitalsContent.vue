@@ -3,17 +3,17 @@
   <div class="search-con">
     <el-form :inline="true" :model="searchStr" class="demo-form-inline">
   <el-form-item label="名称">
-    <el-input v-model="searchStr.name" placeholder="请输入搜索医院名称"></el-input>
+    <el-input v-model="searchStr.name.search" placeholder="请输入搜索医院名称"></el-input>
   </el-form-item>
   <el-form-item label="网站类型">
-    <el-select v-model="searchStr.type" >
+    <el-select v-model="searchStr.type.search" >
       <el-option label="--请选择--" value=""></el-option>
       <el-option label="pc" value="0"></el-option>
       <el-option label="mobile" value="1"></el-option>
     </el-select>
   </el-form-item>
   <el-form-item>
-    <el-button type="primary" @click="getSubHospitalsData">查询</el-button>
+    <el-button type="primary" @click="searchFunc">查询</el-button>
   </el-form-item>
   <el-form-item>
     <el-button type="primary" @click="addHospitals">新增</el-button>
@@ -119,8 +119,10 @@ import {
   getSubHospitals,
   getAllSubHospitals,
   updateHospitals,
-  delHospitals
+  delHospitals,
+  search
 } from "@/api/api";
+import util from "@/utils/util"
 export default {
   name: "cxcdContent",
   data() {
@@ -130,8 +132,14 @@ export default {
       isShowEditVisible: false,
       temp: {},
       searchStr:{
-        name:'',
-        type:''
+        name:{
+          search:'',
+          type:'name'
+        },
+        type:{
+          search:'',
+          type:'type'
+        }
       }
     };
   },
@@ -154,29 +162,20 @@ export default {
     },
     getSubHospitalsData() {
       var _this = this;
-      var requestRoute = this.$route.params.id;
+      var id = this.$route.params.id;
       var requestUrl = "";
-      if (requestRoute == null || requestRoute == "") {
+      //requestRoute 0 所有子医院 x 各分院下的子医院
+      if (id == "0") {
         requestUrl = getAllSubHospitals;
       } else {
-        if(_this.searchStr.name){
-          requestUrl = getSubHospitals + requestRoute + '/name/' + _this.searchStr.name;
-        }else if(_this.searchStr.type){
-          requestUrl = getSubHospitals + requestRoute + '/type/' + _this.searchStr.type;
-        }else{
-          requestUrl = getSubHospitals + requestRoute;
-        }
-        
+        requestUrl = getSubHospitals + id;
       }
       this.$http({
         method: "get",
         url: requestUrl
       }).then(res => {
         var result = res.data;
-        //处理结果 添加编号
-        result.forEach((ele, index) => {
-          ele.num = index + 1;
-        });
+        util.orderNum(result);
         _this.hospitals = result;
       });
     },
@@ -247,7 +246,25 @@ export default {
         });
     },
     searchFunc(){
-
+      var _this = this;
+      var id = this.$route.params.id;
+      var requestUrl = search;
+      let types=[],searchStrs=[]
+      types.push(_this.searchStr.name.type,_this.searchStr.type.type)
+      searchStrs.push(_this.searchStr.name.search,_this.searchStr.type.search)
+      
+      this.$http.post(requestUrl,{
+        params:{
+          id:id,
+          types:types,
+          searchStrs:searchStrs
+        }
+      }).then(res => {
+        var result = res.data.data;
+        //处理结果 添加编号
+        util.orderNum(result);
+        _this.hospitals = result;
+      });
     },
     addHospitals(){
 
