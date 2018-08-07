@@ -16,7 +16,7 @@
     <el-button type="primary" @click="searchFunc">查询</el-button>
   </el-form-item>
   <el-form-item>
-    <el-button type="primary" @click="addHospitals">新增</el-button>
+    <el-button type="primary" @click="handleAdd">新增</el-button>
   </el-form-item>
 </el-form>
   </div>
@@ -89,6 +89,48 @@
       </template>
     </el-table-column>
     </el-table>
+    <el-dialog title="添加子网站" :visible.sync="isShowAddVisible">
+      <el-form label-width="80px" :model="temp" ref="dataForm1">
+        <el-form-item label="网站名称" prop="name">
+          <el-input v-model="temp.name"></el-input>
+        </el-form-item>
+        <el-form-item label="父级医院" prop="pid">
+          <el-select v-model="temp.pid" >
+            <el-option label="--请选择--" value=""></el-option>
+            <el-option label="慈溪城东医院" value="1"></el-option>
+            <el-option label="绍兴城东医院" value="2"></el-option>
+            <el-option label="杭州城东医院" value="3"></el-option>
+            <el-option label="上虞第三医院" value="4"></el-option>
+            <el-option label="宏恩集团" value="5"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="网站链接" prop="url">
+          <el-input v-model="temp.url"></el-input>
+        </el-form-item>
+        <el-form-item label="后台地址" prop="backstageurl">
+          <el-input v-model="temp.backstageurl"></el-input>
+        </el-form-item>
+        <el-form-item label="后台账号" prop="account">
+          <el-input v-model="temp.account"></el-input>
+        </el-form-item>
+        <el-form-item label="后台密码" prop="password">
+          <el-input v-model="temp.password"></el-input>
+        </el-form-item>
+        <el-form-item label="网站类型" prop="type">
+          <el-select v-model="temp.type" >
+            <el-option label="--请选择--" value=""></el-option>
+            <el-option label="pc" value="0"></el-option>
+            <el-option label="mobile" value="1"></el-option>
+            <el-option label="其他" value="2"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div slot="footer" class="dialog-footer">
+        <el-button @click="isShowAddVisible = false">取消</el-button>
+        <el-button type="primary" @click="addHospital" class="title1">确定</el-button>
+      </div>
+    </el-dialog>
+
     <el-dialog title="数据操作" :visible.sync="isShowEditVisible">
       <el-form label-width="80px" :model="temp" ref="dataForm">
         <el-form-item label="网站名称" prop="name">
@@ -120,9 +162,10 @@ import {
   getAllSubHospitals,
   updateHospitals,
   delHospitals,
+  addHospitals,
   search
 } from "@/api/api";
-import util from "@/utils/util"
+import util from "@/utils/util";
 export default {
   name: "cxcdContent",
   data() {
@@ -130,15 +173,16 @@ export default {
       hospitals: [],
       openUrl: "",
       isShowEditVisible: false,
+      isShowAddVisible: false,
       temp: {},
-      searchStr:{
-        name:{
-          search:'',
-          type:'name'
+      searchStr: {
+        name: {
+          search: "",
+          type: "name"
         },
-        type:{
-          search:'',
-          type:'type'
+        type: {
+          search: "",
+          type: "type"
         }
       }
     };
@@ -183,6 +227,10 @@ export default {
       this.isShowEditVisible = true;
       this.temp = Object.assign({}, row);
     },
+    handleAdd(index, row) {
+      this.isShowAddVisible = true;
+      this.temp = Object.assign({}, row);
+    },
     handleDel(index, row) {
       this.temp = Object.assign({}, row);
       const tempData = Object.assign({}, this.temp);
@@ -193,7 +241,7 @@ export default {
       })
         .then(() => {
           this.$http
-            .delete(delHospitals+tempData.id, { id: tempData.id })
+            .delete(delHospitals + tempData.id, { id: tempData.id })
             .then(res => {
               if (res.data.code == "0000") {
                 this.temp = {};
@@ -220,7 +268,7 @@ export default {
       const tempData = Object.assign({}, this.temp);
       this.isShowEditVisible = false;
       this.$http
-        .put(updateHospitals+tempData.id, {
+        .put(updateHospitals + tempData.id, {
           id: tempData.id,
           name: tempData.name,
           backstageurl: tempData.backstageurl,
@@ -245,27 +293,59 @@ export default {
           });
         });
     },
-    searchFunc(){
+    searchFunc() {
       var _this = this;
       var id = this.$route.params.id;
       var requestUrl = search;
-      let types=[],searchStrs=[]
-      types.push(_this.searchStr.name.type,_this.searchStr.type.type)
-      searchStrs.push(_this.searchStr.name.search,_this.searchStr.type.search)
-      
-      this.$http.post(requestUrl,{
-          id:id,
-          types:types,
-          searchStrs:searchStrs
-      }).then(res => {
-        var result = res.data.data;
-        //处理结果 添加编号
-        util.orderNum(result);
-        _this.hospitals = result;
-      });
-    },
-    addHospitals(){
+      let types = [],
+        searchStrs = [];
+      types.push(_this.searchStr.name.type, _this.searchStr.type.type);
+      searchStrs.push(_this.searchStr.name.search, _this.searchStr.type.search);
 
+      this.$http
+        .post(requestUrl, {
+          id: id,
+          types: types,
+          searchStrs: searchStrs
+        })
+        .then(res => {
+          var result = res.data.data;
+          //处理结果 添加编号
+          util.orderNum(result);
+          _this.hospitals = result;
+        });
+    },
+    addHospital() {
+      const tempData = Object.assign({}, this.temp);
+      this.isShowAddVisible = false;
+      this.$http
+        .post(addHospitals, {
+          id: tempData.id,
+          name: tempData.name,
+          backstageurl: tempData.backstageurl,
+          account: tempData.account,
+          password: tempData.password,
+          type: tempData.type,
+          pid: tempData.pid,
+          url: tempData.url
+        })
+        .then(res => {
+          console.log(res)
+          if (res.data.code == "0000") {
+            this.temp = {};
+          } else {
+            this.$message({
+              type: "warning",
+              message: res.data.errors[0].message
+            });
+          }
+        })
+        .catch(res => {
+          this.$message({
+            type: "warning ",
+            message: res.data.errors[0].message
+          });
+        });
     }
   },
   watch: {
@@ -277,9 +357,9 @@ export default {
 
 
 <style scoped>
-.search-con{
+.search-con {
   border-top: 1px solid #ddd;
-  padding:20px 20px 0 20px;
+  padding: 20px 20px 0 20px;
   height: 63px;
   max-height: 63px;
 }

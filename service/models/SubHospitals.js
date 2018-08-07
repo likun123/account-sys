@@ -1,6 +1,7 @@
 const {db} = require('../db')
 
 module.exports = db.defineModel('subHospitals',{
+	pid:db.INTEGER,
 	name:db.STRING(50),
 	backstageurl:db.STRING(50),
 	url:db.STRING(50),

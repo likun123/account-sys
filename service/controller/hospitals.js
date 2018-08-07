@@ -4,7 +4,7 @@ const Hospitals = model.Hospitals
 const SubHospitals = model.SubHospitals
 const { codes, checkResponseCode } = require('../utils/codes')
 const hospitalsService = require('../service/hospitals')
-
+const util = require('../utils')
 
 /*获取医院相关信息*/
 const getHospitals = async (ctx, next) => {
@@ -66,7 +66,20 @@ const updateSubHospital = async (ctx, next) => {
 			return codes['1013']
 		})
 }
-
+const addSubHospital = async (ctx , next) => {
+	const hospital = Object.assign({}, ctx.request.body)
+	ctx.body = await SubHospitals.create(hospital)
+	.then(res=>{
+		if(res){
+			return codes['0000']
+		}else{
+			return codes['1033']
+		}
+	})
+	.catch(res=>{
+		return res
+	})
+}
 const delSubHospital = async (ctx, next) => {
 	//通过参数获取id
 	const id = ctx.params.id;
@@ -122,5 +135,10 @@ module.exports = [
 		path: '/SubHospitals/:id',
 		method: 'del',
 		func: delSubHospital
+	},
+	{
+		path: '/addSubHospitals',
+		method: 'post',
+		func: addSubHospital
 	}
 ]
