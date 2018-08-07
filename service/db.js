@@ -5,6 +5,7 @@ const sequelize = new Sequelize(mysqlConf.database,mysqlConf.username,mysqlConf.
 	host:mysqlConf.host,
 	port:mysqlConf.port,
 	dialect:'mysql',
+	operatorsAliases:false,
 	pool:{
 		max:5,
 		min:0,

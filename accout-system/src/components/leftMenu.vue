@@ -12,7 +12,7 @@
         <i class="el-icon-menu"></i>
         <span slot="title">医院列表</span>
       </template>
-      <el-menu-item index='/hospitals/0'>
+      <el-menu-item index='/hospitals'>
         <i class="el-icon-location"></i>
         <span slot="title">所有下属医院</span>
       </el-menu-item>

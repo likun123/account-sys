@@ -24,6 +24,11 @@ export default new Router({
                 component:hospitalsContent
             },
             {
+            path: 'hospitals',
+            name: 'hospitalsAllContent',
+            component: hospitalsContent
+        },
+            {
             path: 'hospitals/:id',
             name: 'hospitalsContent',
             component: hospitalsContent

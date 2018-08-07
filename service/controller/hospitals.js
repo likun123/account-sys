@@ -2,21 +2,10 @@ const { sequelize } = require('../db')
 const model = require('../model')
 const Hospitals = model.Hospitals
 const SubHospitals = model.SubHospitals
-const Services = model.Services
-const Records = model.Records
 const { codes, checkResponseCode } = require('../utils/codes')
-const util = require('../utils/util')
-const Sequelize = require('sequelize')
-const Op = Sequelize.Op;
-const index = async (ctx, next) => {
-	ctx.body = `<h1>Index</h1>
-		<form action="/hospitals" method="POST">
-			<p>Name: <input name="name" value="koa" type="text" /> </p>
-			<p>Password: <input name="password" type="password" /></p>
-			<p><input type="submit" value="submit" /></p>
-		</form>
-	`;
-}
+const hospitalsService = require('../service/hospitals')
+
+
 /*获取医院相关信息*/
 const getHospitals = async (ctx, next) => {
 	//获取医院列表
@@ -34,19 +23,10 @@ const getSubHospitals = async (ctx, next) => {
 
 const search = async (ctx, next) => {
 	//模糊查询字符串
-	const { id, types, searchStrs } = ctx.request.body.params;
-	let searchSql = ''
-	let idStr = ''
-	//拼接types,searchStrs
-	let splitStrs = util.splitType(types, searchStrs)
-	if (util.isNull(id)) {
-		idStr = `AND pid = ${id}`
-		searchSql = `SELECT id,account,backstageurl,name,password,type,url 
-		FROM subHospitals WHERE ${splitStrs} ${idStr} `
-	} else {
-		searchSql = `SELECT id,account,backstageurl,name,password,type,url 
-		FROM subHospitals WHERE ${splitStrs}`
-	}
+	const { id, types, searchStrs } = ctx.request.body;
+	//获得模糊查询字符串
+	let searchSql = hospitalsService.fuzzySearch(id,types,searchStrs);
+	//返回数据
 	ctx.body = await sequelize.query(searchSql, { type: sequelize.QueryTypes.SELECT })
 		.then(searchs => {
 			return checkResponseCode(searchs)
@@ -59,14 +39,7 @@ const getAllSubHospitals = async (ctx, next) => {
 	//获取所有子医院列表
 	ctx.body = await SubHospitals.findAll();
 }
-const getServices = async (ctx, next) => {
-	//获取服务器列表
-	ctx.body = await Services.findAll()
-}
-const getRecords = async (ctx, next) => {
-	//获取备案信息列表
-	ctx.body = await Records.findAll()
-}
+
 
 const updateSubHospital = async (ctx, next) => {
 	// console.log(JSON.stringify(ctx.request))
@@ -115,15 +88,15 @@ const delSubHospital = async (ctx, next) => {
 }
 
 module.exports = [
-	/*{
-		path: '/',
-		method: 'get',
-		func: index
-	},*/
 	{
 		path: '/Hospitals',
 		method: 'get',
 		func: getHospitals
+	},
+	{
+		path: '/SubHospitals',
+		method: 'get',
+		func: getSubHospitals
 	},
 	{
 		path: '/SubHospitals/:id',
@@ -134,16 +107,6 @@ module.exports = [
 		path: '/search',
 		method: 'post',
 		func: search
-	},
-	{
-		path: '/services',
-		method: 'get',
-		func: getServices
-	},
-	{
-		path: '/records',
-		method: 'get',
-		func: getRecords
 	},
 	{
 		path: '/AllSubHospitals',

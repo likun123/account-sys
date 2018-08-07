@@ -165,7 +165,7 @@ export default {
       var id = this.$route.params.id;
       var requestUrl = "";
       //requestRoute 0 所有子医院 x 各分院下的子医院
-      if (id == "0") {
+      if (id == undefined || id == "" || id == null) {
         requestUrl = getAllSubHospitals;
       } else {
         requestUrl = getSubHospitals + id;
@@ -254,11 +254,9 @@ export default {
       searchStrs.push(_this.searchStr.name.search,_this.searchStr.type.search)
       
       this.$http.post(requestUrl,{
-        params:{
           id:id,
           types:types,
           searchStrs:searchStrs
-        }
       }).then(res => {
         var result = res.data.data;
         //处理结果 添加编号
