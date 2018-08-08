@@ -12,6 +12,7 @@ const updateHospitals = Host+'/SubHospitals/'
 const delHospitals = Host+'/SubHospitals/'
 const addHospitals = Host+'/addSubHospitals/'
 const search = Host+'/search'
+const isLogin = Host+'/users/isLogin/'
 export {
     getHospitals,
     getSubHospitals,
@@ -23,5 +24,6 @@ export {
     updateHospitals,
     delHospitals,
     addHospitals,
-    search
+    search,
+    isLogin
 }

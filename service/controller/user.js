@@ -41,10 +41,20 @@ const login = async (ctx, next) => {
     })
     .then(res =>{
         var result = checkResponseCode(res);
-        result.token = Utils.generateToken(res);
+        if(result.code == "0000"){
+            result.token = Utils.generateToken(res);
+        }
         return result;
     })
 }
+//验证token 返回用户是否登录
+const checkIsLogin = async (ctx, next) => {
+    let token = ctx.params.token;
+    let result = Utils.verifyToken(token)
+    //返回data 不是空对象则是已登录
+    ctx.body = await checkResponseCode(result)
+}
+
 
 module.exports = [
     {
@@ -76,5 +86,10 @@ module.exports = [
         path: '/users/login',
         method: 'post',
         func: login
+    },
+    {
+        path:'/users/isLogin/:token',
+        method:'get',
+        func:checkIsLogin
     }
 ]
