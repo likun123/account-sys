@@ -3,7 +3,8 @@
 const app = {
   state: {
     token: '',
-    user:''
+    user:'',
+    menuStatus:false
   },
   mutations: {
     TOKENCHECK: state => {
@@ -15,6 +16,9 @@ const app = {
     LOGINOUT: state => {
       state.user = localStorage.setItem("user","")
       state.token = localStorage.setItem("token","")
+    },
+    changeMenuStatus: state=>{
+      state.menuStatus = !state.menuStatus
     }
   },
   actions: {

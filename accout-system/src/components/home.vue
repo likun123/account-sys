@@ -1,7 +1,7 @@
 <template>
   <div class="home">
     <left-menu></left-menu>
-    <div class="mainContent">
+    <div class="mainContent" :class="menuStatus ? 'menuClose':''">
       <div class="main-info-header">
         账户名称：{{user.name}}
         <span class="loginOut" @click="loginOut">退出</span>
@@ -22,12 +22,17 @@ export default {
   },
   beforeMount(){
     const user = JSON.parse(localStorage.getItem('user'))
-    this.user = user    
+    this.user = user  
   },
   methods: {
     loginOut(){
       this.$store.commit('LOGINOUT');
       this.$router.push('/login')
+    }
+  },
+  computed:{
+    menuStatus(){
+      return this.$store.state.app.menuStatus
     }
   },
   components:{
@@ -49,6 +54,9 @@ export default {
     float: left;
     overflow: hidden auto;
     height: 100%;
+}
+.menuClose.mainContent{
+  width: calc(100% - 65px);
 }
 .main-info-header{
   text-align: right;
