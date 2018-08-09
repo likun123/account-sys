@@ -3,6 +3,8 @@ import App from './App.vue'
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
 
+//vuei18n
+import i18n from './i18n/i18n'
 import router from './router'
 import store from './store'
 import axios from './axios/index'
@@ -53,5 +55,6 @@ Vue.prototype.$http = axios
 new Vue({
   render: h => h(App),
   router,
-  store
+  store,
+  i18n
 }).$mount('#app')
