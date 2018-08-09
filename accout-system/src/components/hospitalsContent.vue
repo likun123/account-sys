@@ -330,7 +330,6 @@ export default {
           url: tempData.url
         })
         .then(res => {
-          console.log(res)
           if (res.data.code == "0000") {
             this.temp = {};
           } else {

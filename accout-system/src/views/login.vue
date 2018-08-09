@@ -71,7 +71,7 @@ export default {
                 localStorage.setItem('user',JSON.stringify(res.data.data))
                 _this.$store.commit('TOKENCHECK');
                 _this.$store.commit('USERINFO');
-                _this.$router.push({ name: "hospitalsContent",params:{id:0}});
+                _this.$router.push({ name: "hospitalsAllContent"});
               } else {
                 //login error
                 alert("登录失败,请检查账号密码是否正确!");

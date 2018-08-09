@@ -61,6 +61,13 @@ function checkResponseCode(res){
     if(res === '' || res === null || res === undefined){
         return getResponseCode(codes['1006'],res)
     }else{
+        if((res instanceof Object)){
+            if(res.id){
+                return getResponseCode(codes['0000'],res)
+            }else{
+             return getResponseCode(codes['1003'],res)
+            }
+         }
         return getResponseCode(codes['0000'],res)
     }
 }
