@@ -7,7 +7,7 @@
   :collapse-transition="false"
   active-text-color="#00c1de"
   >
-    <h2 class="text-center"> {{ sysName }}{{ $t("message.mes") }}</h2>
+    <h2 class="text-center"> {{ sysName }}</h2>
     <div class="menuToggle" @click="changeMenuStatus">
       <div v-if="isCollapse">|||</div>
       <div v-else>三</div>
