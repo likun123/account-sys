@@ -47,19 +47,17 @@ const fuzzySearch = function(id, types, searchStrs,pagenum){
 	let idStr = ''
 	//拼接types,searchStrs
 	let splitStrs = splitType(types, searchStrs)
-	console.log(JSON.stringify(pagenum))
 	let pagenationStrs = splitPagenation(pagenum,10);
-	console.log(pagenationStrs)
 	//所有子医院的检索
 	if (util.isNull(id)) {
-		searchSql = `SELECT id,account,backstageurl,name,password,type,url
+		searchSql = `SELECT count(id) as count
 		FROM subHospitals WHERE ${splitStrs}`
 		searchWithPagenationSql = `SELECT id,account,backstageurl,name,password,type,url
 		FROM subHospitals WHERE ${splitStrs} ${pagenationStrs}`
 	} else {
 		//某一类子医院检索
 		idStr = `AND pid = ${id}`
-		searchSql = `SELECT id,account,backstageurl,name,password,type,url
+		searchSql = `SELECT count(id) as count
 		FROM subHospitals WHERE ${splitStrs} ${idStr}`
 		searchWithPagenationSql = `SELECT id,account,backstageurl,name,password,type,url
 		FROM subHospitals WHERE ${splitStrs} ${idStr} ${pagenationStrs}`

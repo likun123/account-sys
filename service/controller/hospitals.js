@@ -33,10 +33,10 @@ const getSubHospitals = async (ctx, next) => {
 const search = async (ctx, next) => {
 	//模糊查询字符串
 	const { id, types, searchStrs,pagenum } = ctx.request.body;
-	console.log("pagenum:"+pagenum)
 	//获得模糊查询字符串
 	let {searchSql,searchWithPagenationSql} = hospitalsService.fuzzySearch(id,types,searchStrs,pagenum);
-	let countall =  await sequelize.query(searchSql,{ type: sequelize.QueryTypes.SELECT }).then(res=>{return res.length});
+	//获取查询总条数
+	let countall =  await sequelize.query(searchSql,{ type: sequelize.QueryTypes.SELECT }).then(res=>{return res[0].count});
 	//返回数据
 	ctx.body = await sequelize.query(searchWithPagenationSql, { type: sequelize.QueryTypes.SELECT })
 		.then(searchs => {
