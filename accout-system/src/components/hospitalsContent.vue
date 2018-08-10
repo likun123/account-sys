@@ -23,7 +23,7 @@
       <el-table
       :data="hospitals"
       style="width: 100%" 
-      height="calc(100% - 83px)"
+      height="calc(100% - 151px)"
       highlight-current-row
       stripe
       border
@@ -89,6 +89,13 @@
       </template>
     </el-table-column>
     </el-table>
+    <el-pagination 
+      class="pagenation"
+      background
+      layout="prev, pager, next"
+      @current-change="searchFunc"
+      :total="countall">
+    </el-pagination>
     <el-dialog title="添加子网站" :visible.sync="isShowAddVisible">
       <el-form label-width="80px" :model="temp" ref="dataForm1">
         <el-form-item label="网站名称" prop="name">
@@ -184,11 +191,12 @@ export default {
           search: "",
           type: "type"
         }
-      }
+      },
+      countall:0
     };
   },
   beforeMount() {
-    this.getSubHospitalsData();
+    this.searchFunc();
   },
   mounted() {},
   methods: {
@@ -218,9 +226,11 @@ export default {
         method: "get",
         url: requestUrl
       }).then(res => {
-        var result = res.data;
+        console.log(res)
+        var result = res.data.data;
         util.orderNum(result);
         _this.hospitals = result;
+        _this.countall = res.data.count;
       });
     },
     handleEdit(index, row) {
@@ -293,7 +303,8 @@ export default {
           });
         });
     },
-    searchFunc() {
+    searchFunc(val) {
+      val = typeof val === "number" ? val : 1;
       var _this = this;
       var id = this.$route.params.id;
       var requestUrl = search;
@@ -306,13 +317,15 @@ export default {
         .post(requestUrl, {
           id: id,
           types: types,
-          searchStrs: searchStrs
+          searchStrs: searchStrs,
+          pagenum:val
         })
         .then(res => {
           var result = res.data.data;
           //处理结果 添加编号
           util.orderNum(result);
           _this.hospitals = result;
+          _this.countall = res.data.count;
         });
     },
     addHospital() {
@@ -348,8 +361,8 @@ export default {
     }
   },
   watch: {
-    $route: "getSubHospitalsData",
-    temp: "getSubHospitalsData"
+    $route: "searchFunc",
+    temp: "searchFunc"
   }
 };
 </script>
@@ -361,5 +374,10 @@ export default {
   padding: 20px 20px 0 20px;
   height: 63px;
   max-height: 63px;
+}
+.pagenation{
+  max-height: 81px;
+  padding:20px;
+  text-align: center
 }
 </style>

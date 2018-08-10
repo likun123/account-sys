@@ -57,25 +57,32 @@ const codes ={
     }
 }
 
-function checkResponseCode(res){
+function checkResponseCode(res,countall){
     if(res === '' || res === null || res === undefined){
         return getResponseCode(codes['1006'],res)
     }else{
-        if((res instanceof Object)){
+        //判断返回对象内容是否为空 
+    if((res instanceof Object)){
+        if(res instanceof Array){
+            return getResponseCode(codes['0000'],res,countall)
+        }else{
+        //res.id 不为空则是已登录
             if(res.id){
                 return getResponseCode(codes['0000'],res)
             }else{
-             return getResponseCode(codes['1003'],res)
+                return getResponseCode(codes['1003'],res)
             }
-         }
-        return getResponseCode(codes['0000'],res)
+        }  
     }
+    }
+    
 }
-function getResponseCode(obj,res){
+function getResponseCode(obj,res,countall){
     return {
         code:obj.code,
         msg:obj.msg,
-        data:res
+        data:res,
+        count:countall
     }
 }
 

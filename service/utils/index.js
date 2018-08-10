@@ -41,7 +41,7 @@ let util = {
  * @returns 
  */
     isNull(val) {
-        if (val == undefined || val == null || val == "" || val == '' || val == "undefined" || val == "null" || val == "NULL" || val != "0" || val != 0) {
+        if (val == undefined || val == null || val == "" || val == '' || val == "undefined" || val == "null" || val == "NULL" || val == "0" || val == 0) {
             return true
         }
         return false

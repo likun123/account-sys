@@ -14,22 +14,33 @@ const getHospitals = async (ctx, next) => {
 const getSubHospitals = async (ctx, next) => {
 	//获取对应id下所有子医院列表
 	let id = ctx.params.id
+	let countall = await SubHospitals.findAll({
+		where:{
+			pid:id
+		}
+	}).then(res => {
+		return res.length
+	});
 	ctx.body = await SubHospitals.findAll({
 		where: {
 			pid: id
 		}
+	}).then(res => {
+		return checkResponseCode(res,countall)
 	});
 }
 
 const search = async (ctx, next) => {
 	//模糊查询字符串
-	const { id, types, searchStrs } = ctx.request.body;
+	const { id, types, searchStrs,pagenum } = ctx.request.body;
+	console.log("pagenum:"+pagenum)
 	//获得模糊查询字符串
-	let searchSql = hospitalsService.fuzzySearch(id,types,searchStrs);
+	let {searchSql,searchWithPagenationSql} = hospitalsService.fuzzySearch(id,types,searchStrs,pagenum);
+	let countall =  await sequelize.query(searchSql,{ type: sequelize.QueryTypes.SELECT }).then(res=>{return res.length});
 	//返回数据
-	ctx.body = await sequelize.query(searchSql, { type: sequelize.QueryTypes.SELECT })
+	ctx.body = await sequelize.query(searchWithPagenationSql, { type: sequelize.QueryTypes.SELECT })
 		.then(searchs => {
-			return checkResponseCode(searchs)
+			return checkResponseCode(searchs,countall)
 		})
 		.catch(res => {
 			console.log(res)
@@ -37,7 +48,12 @@ const search = async (ctx, next) => {
 }
 const getAllSubHospitals = async (ctx, next) => {
 	//获取所有子医院列表
-	ctx.body = await SubHospitals.findAll();
+	let countall = await SubHospitals.findAll().then(res => {
+		return res.length
+	});
+	ctx.body = await SubHospitals.findAll().then(res => {
+		return checkResponseCode(res,countall)
+	});
 }
 
 
@@ -51,20 +67,20 @@ const updateSubHospital = async (ctx, next) => {
 		password: password,
 		type: type
 	}, {
-			where: {
-				id: id
-			}
-		})
-		.then(res => {
-			if (res != 0) {
-				return codes['0000']
-			} else {
-				return codes['1012']
-			}
-		})
-		.catch(res => {
-			return codes['1013']
-		})
+		where: {
+			id: id
+		}
+	})
+	.then(res => {
+		if (res != 0) {
+			return codes['0000']
+		} else {
+			return codes['1012']
+		}
+	})
+	.catch(res => {
+		return codes['1013']
+	})
 }
 const addSubHospital = async (ctx , next) => {
 	const hospital = Object.assign({}, ctx.request.body)
