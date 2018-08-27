@@ -27,12 +27,17 @@
       highlight-current-row
       stripe
       border
+      @selection-change="handleSelectionChange"
       @cell-click="toLoginUrl"
       >
       <el-table-column
+      type="selection"
+      width="55">
+    </el-table-column>
+      <el-table-column
         prop="num"
         label="序号"
-        width="50px"
+        width="50"
         align="center"
         >
       </el-table-column>
@@ -46,7 +51,7 @@
       <el-table-column
         prop="backstageurl"
         label="后台登录地址"
-        width="350px"
+        width="350"
         align="center"
         :formatter=linkBackstageurl
         >
@@ -68,7 +73,7 @@
       <el-table-column
         prop="type"
         label="类型"
-        width="100px"
+        width="100"
         align="center"
         :formatter=formatter
         >
@@ -94,6 +99,7 @@
       background
       layout="prev, pager, next"
       @current-change="searchFunc"
+      :current-page="currentpage"
       :total="countall">
     </el-pagination>
     <el-dialog title="添加子网站" :visible.sync="isShowAddVisible">
@@ -192,7 +198,9 @@ export default {
           type: "type"
         }
       },
-      countall:0
+      countall:0,
+      multipleSelection:[],
+      currentpage:1
     };
   },
   beforeMount() {
@@ -305,11 +313,12 @@ export default {
     },
     searchFunc(val) {
       val = typeof val === "number" ? val : 1;
+      this.currentpage = val;
       var _this = this;
       var id = this.$route.params.id;
       var requestUrl = search;
       let types = [],
-        searchStrs = [];
+      searchStrs = [];
       types.push(_this.searchStr.name.type, _this.searchStr.type.type);
       searchStrs.push(_this.searchStr.name.search, _this.searchStr.type.search);
 
@@ -323,6 +332,7 @@ export default {
         .then(res => {
           var result = res.data.data;
           //处理结果 添加编号
+          console.log(result)
           util.orderNum(result);
           _this.hospitals = result;
           _this.countall = res.data.count;
@@ -358,6 +368,10 @@ export default {
             message: res.data.errors[0].message
           });
         });
+    },
+    handleSelectionChange(val){
+      this.multipleSelection=val
+      console.log(this.multipleSelection)
     }
   },
   watch: {
