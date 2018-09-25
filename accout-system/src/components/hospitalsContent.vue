@@ -222,7 +222,7 @@ export default {
     },
     getSubHospitalsData() {
       var _this = this;
-      var id = this.$route.params.id;
+      var id = this.$route.params.id || JSON.parse(localStorage.getItem("user")).type;
       var requestUrl = "";
       //requestRoute 0 所有子医院 x 各分院下的子医院
       if (id == undefined || id == "" || id == null) {
@@ -234,7 +234,6 @@ export default {
         method: "get",
         url: requestUrl
       }).then(res => {
-        console.log(res)
         var result = res.data.data;
         util.orderNum(result);
         _this.hospitals = result;
@@ -315,7 +314,8 @@ export default {
       val = typeof val === "number" ? val : 1;
       this.currentpage = val;
       var _this = this;
-      var id = this.$route.params.id;
+      //获取医院类表类型
+      var id = this.$route.params.id || JSON.parse(localStorage.getItem("user")).type;
       var requestUrl = search;
       let types = [],
       searchStrs = [];
@@ -332,7 +332,6 @@ export default {
         .then(res => {
           var result = res.data.data;
           //处理结果 添加编号
-          console.log(result)
           util.orderNum(result);
           _this.hospitals = result;
           _this.countall = res.data.count;

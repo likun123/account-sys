@@ -1,5 +1,6 @@
 const {db} = require('../db')
 
 module.exports = db.defineModel('users',{
-	name:db.STRING(50)
+	name:db.STRING(50),
+	type:db.INTEGER
 })
