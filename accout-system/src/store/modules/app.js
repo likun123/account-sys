@@ -16,6 +16,7 @@ const app = {
     LOGINOUT: state => {
       state.user = localStorage.setItem("user","")
       state.token = localStorage.setItem("token","")
+      state.loginTime = localStorage.setItem('loginTime',"")
     },
     changeMenuStatus: state=>{
       state.menuStatus = !state.menuStatus

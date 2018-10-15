@@ -15,7 +15,7 @@
     </div> 
 </template>
 <script>
-import { login, register } from "@/api/api";
+import { login } from "@/api/api";
 export default {
   name: "login",
   data() {
@@ -69,6 +69,8 @@ export default {
                 //login success
                 localStorage.setItem('token',res.data.token)
                 localStorage.setItem('user',JSON.stringify(res.data.data))
+                //设置当前时间戳
+                localStorage.setItem('loginTime',Date.parse(new Date()));
                 _this.$store.commit('TOKENCHECK');
                 _this.$store.commit('USERINFO');
                 _this.$router.push({ name: "hospitalsAllContent"});
