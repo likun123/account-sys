@@ -38,7 +38,7 @@ export default {
       var outTime = nowTime - browserTime;
     }
     //过期时间
-    var loginOutTime = 60 * 1000 * 1 ;
+    var loginOutTime = 60 * 60 * 1000 * 24 ;
     //过期重新请求
     if (outTime >= loginOutTime) {
       _this.$store.commit("LOGINOUT");
