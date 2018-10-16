@@ -204,7 +204,10 @@ export default {
     };
   },
   beforeMount() {
-    this.searchFunc();
+    if(localStorage.getItem("user")){
+      this.searchFunc();
+    }
+    
   },
   mounted() {},
   methods: {

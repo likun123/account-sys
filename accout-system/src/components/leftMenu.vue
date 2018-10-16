@@ -29,6 +29,7 @@ export default {
     };
   },
   beforeMount() {
+    var _this = this;
     //获取当前时间戳
     var nowTime = Date.parse(new Date());
     //获取浏览器时间戳
@@ -37,10 +38,11 @@ export default {
       var outTime = nowTime - browserTime;
     }
     //过期时间
-    var loginOutTime = 60 * 1000 * 2;
+    var loginOutTime = 60 * 1000 * 1 ;
     //过期重新请求
     if (outTime >= loginOutTime) {
       _this.$store.commit("LOGINOUT");
+      _this.$router.push({ name: "login"});
     } else {
       //如果有localStorage就读取权限
       if (localStorage.getItem("user")) {
