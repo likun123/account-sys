@@ -59,9 +59,10 @@ const getAllSubHospitals = async (ctx, next) => {
 
 const updateSubHospital = async (ctx, next) => {
 	// console.log(JSON.stringify(ctx.request))
-	const { id, name, backstageurl, account, password, type } = ctx.request.body;
+	const { id, name, backstageurl,url, account, password, type } = ctx.request.body;
 	ctx.body = await SubHospitals.update({
 		name: name,
+		url: url,
 		backstageurl: backstageurl,
 		account: account,
 		password: password,
