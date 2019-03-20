@@ -121,7 +121,7 @@
           <el-input v-model="temp.url"></el-input>
         </el-form-item>
         <el-form-item label="后台地址" prop="backstageurl">
-          <el-input v-model="temp.backstageurl"></el-input>
+          <el-input placeholder="(dede修改后目录名称)" v-model="temp.backstageurl"></el-input>
         </el-form-item>
         <el-form-item label="后台账号" prop="account">
           <el-input v-model="temp.account"></el-input>
@@ -148,6 +148,9 @@
       <el-form label-width="80px" :model="temp" ref="dataForm">
         <el-form-item label="网站名称" prop="name">
           <el-input v-model="temp.name"></el-input>
+        </el-form-item>
+        <el-form-item label="后台域名" prop="name">
+          <el-input v-model="temp.url"></el-input>
         </el-form-item>
         <el-form-item label="后台地址" prop="backstageurl">
           <el-input v-model="temp.backstageurl"></el-input>
@@ -290,6 +293,7 @@ export default {
       this.$http
         .put(updateHospitals + tempData.id, {
           id: tempData.id,
+          url: tempData.url,
           name: tempData.name,
           backstageurl: tempData.backstageurl,
           account: tempData.account,
