@@ -10,6 +10,8 @@
       <el-option label="--请选择--" value=""></el-option>
       <el-option label="pc" value="0"></el-option>
       <el-option label="mobile" value="1"></el-option>
+      <el-option label="未知" value="2"></el-option>
+      <el-option label="停用" value="3"></el-option>
     </el-select>
   </el-form-item>
   <el-form-item>
@@ -135,6 +137,7 @@
             <el-option label="pc" value="0"></el-option>
             <el-option label="mobile" value="1"></el-option>
             <el-option label="其他" value="2"></el-option>
+            <el-option label="停用" value="3"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -203,7 +206,8 @@ export default {
       },
       countall:0,
       multipleSelection:[],
-      currentpage:1
+      currentpage:1,
+      remberCurrentPage:1
     };
   },
   beforeMount() {
@@ -221,7 +225,7 @@ export default {
       }
     },
     formatter(row) {
-      return row.type == 0 ? "PC" : row.type == 1 ? "mobile" : "未知";
+      return row.type == 0 ? "PC" : row.type == 1 ? "mobile" : row.type == 3 ? "停用" : "未知";
     },
     linkBackstageurl(row) {
       return "//" + row.url + "/" + row.backstageurl;
@@ -318,8 +322,11 @@ export default {
         });
     },
     searchFunc(val) {
-      val = typeof val === "number" ? val : 1;
-      this.currentpage = val;
+      // 判断val值内容 判断是否为number 是则传递currentpage为当前页码
+      if(typeof val === "number"){
+        this.currentpage = val;
+      }
+      
       var _this = this;
       //获取医院类表类型
       var id = this.$route.params.id || JSON.parse(localStorage.getItem("user")).type;
@@ -334,7 +341,7 @@ export default {
           id: id,
           types: types,
           searchStrs: searchStrs,
-          pagenum:val
+          pagenum:this.currentpage
         })
         .then(res => {
           var result = res.data.data;
