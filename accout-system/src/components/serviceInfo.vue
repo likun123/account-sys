@@ -2,7 +2,6 @@
     <el-table
       :data="servicesInfo"
       style="width: 100%" 
-      height="100%"
       highlight-current-row
       stripe
       border

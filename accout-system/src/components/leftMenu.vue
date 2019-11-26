@@ -49,8 +49,7 @@ export default {
         //用户权限
         let loginAuthority = JSON.parse(localStorage.getItem("user")).type;
         /*判断权限  0 超级管理员 1 慈溪 2 绍兴 3 城东 4 上虞 5 宏恩
-      */
-        var _this = this;
+      */        
         if (loginAuthority == "0") {
           //如果为超级管理员 则请求全部子医院菜单
           this.$http({
